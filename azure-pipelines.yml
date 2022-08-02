@@ -1,0 +1,40 @@
+# Docker
+# Build a Docker image
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- master
+
+resources:
+  repositories:
+  - repository: java-image
+    type: git 
+    name: DevOps - Testing Pipeline/java-image
+    ref: master
+    trigger:
+    - master
+  - repository: self
+    type: git 
+    name: DevOps - Testing Pipeline/springboot
+    trigger:
+    - master
+
+
+
+variables:
+  tag: '$(Build.BuildId)'
+  tools.ref: $[ resources.repositories['other'].ref ]
+
+stages:
+- stage: Build
+  displayName: Build image
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: ubuntu-latest
+    steps:  
+    - checkout: self
+    - checkout: java-image
+
+ 
